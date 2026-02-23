@@ -1,14 +1,20 @@
-﻿@using DMB.Core.Dmf
+﻿@using DMB.Core
+@using DMB.Core.Dmf
 <h3>DynamicModule</h3>
 
-@* @inject DmfService DmfService *@
+@inject ModuleStateCore moduleState;
+@inject DmfServiceCore DmfService 
 
 @code {
     [Parameter]
-    public string ModuleFileName { get; set; } = string.Empty;
+    public string? ModuleFileName { get; set; }
 
     protected override Task OnInitializedAsync()
     {
+        if (!string.IsNullOrWhiteSpace(this.ModuleFileName))
+        {
+            var grid = this.DmfService.Load(moduleState, this.ModuleFileName);
+        }
         return base.OnInitializedAsync();
     }
 }
