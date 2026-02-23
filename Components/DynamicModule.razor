@@ -1,0 +1,14 @@
+﻿@using DMB.Core.Dmf
+<h3>DynamicModule</h3>
+
+@* @inject DmfService DmfService *@
+
+@code {
+    [Parameter]
+    public string ModuleFileName { get; set; } = string.Empty;
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+}
