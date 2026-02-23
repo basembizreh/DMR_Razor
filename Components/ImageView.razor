@@ -1,0 +1,10 @@
+﻿<MudImage Src="@Model.Src"
+          Alt="@Model.Alt"
+          Fluid="true"
+          Elevation="0"
+          Class="dmr-image" />
+
+@code {
+    [Parameter, EditorRequired]
+    public ImageModelCore Model { get; set; } = default!;
+}

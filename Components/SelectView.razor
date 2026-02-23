@@ -1,0 +1,26 @@
+﻿<MudSelectExtended T="string"
+                   Dense="true"
+                   Variant="Variant.Outlined"
+                   Value="@("Test Item")"
+                   ValueChanged="OnChanged"
+                   Disabled="@Model.Disabled">
+
+    @* @if (Model.Items is not null)
+    {
+        foreach (var item in Model.Items)
+        {
+            <MudSelectItem T="string" Value="@item.Value">@item.Text</MudSelectItem>
+        }
+    } *@
+</MudSelectExtended>
+
+@code {
+    [Parameter, EditorRequired]
+    public SelectModelCore Model { get; set; } = default!;
+
+    private Task OnChanged(string? v)
+    {
+        //Model.Value = v;
+        return Task.CompletedTask;
+    }
+}

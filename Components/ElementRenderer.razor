@@ -1,0 +1,46 @@
+﻿@switch (Element)
+{
+    case TextBlockModelCore tb:
+        <TextBlockView Model="tb" />
+        break;
+
+    case TextInputModelCore ti:
+        <TextInputView Model="ti" />
+        break;
+
+    case SelectModelCore sel:
+        <SelectView Model="sel" />
+        break;
+
+    case DatePickerModelCore dp:
+        <DatePickerView Model="dp" />
+        break;
+
+    case TimePickerModelCore tp:
+        <TimePickerView Model="tp" />
+        break;
+
+    case RadioButtonModelCore rb:
+        <RadioButtonView Model="rb" />
+        break;
+
+    case CheckBoxModelCore cb:
+        <CheckBoxView Model="cb" />
+        break;
+
+    case ButtonModelCore tb:
+        <ButtonView Model="tb" />
+        break;
+
+    case ImageModelCore im:
+        <ImageView Model="im" />
+        break;
+
+    default:
+        <div class="dmr-unknown">@Element.GetType().Name</div>
+        break;
+}
+
+@code {
+    [Parameter, EditorRequired] public ElementModel Element { get; set; } = default!;
+}

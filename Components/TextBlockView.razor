@@ -1,0 +1,8 @@
+﻿<MudText Typo="@Model.Typo">
+    @Model.Text
+</MudText>
+
+@code {
+    [Parameter, EditorRequired]
+    public TextBlockModelCore Model { get; set; } = default!;
+}

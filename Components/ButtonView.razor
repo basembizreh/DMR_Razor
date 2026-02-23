@@ -1,0 +1,10 @@
+﻿<MudButton Variant="@Model.Variant"
+           Color="@Model.Color"
+           StartIcon="@Model.StartIconKey">
+    @Model.Text
+</MudButton>
+
+@code {
+    [Parameter, EditorRequired]
+    public ButtonModelCore Model { get; set; } = default!;
+}

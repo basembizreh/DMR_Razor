@@ -1,0 +1,17 @@
+﻿<MudTextField T="string"
+              Value="@Model.Text"
+              ValueChanged="OnChanged"
+              Immediate="true"
+              Variant="Variant.Outlined"
+              Margin="Margin.Dense" />
+
+@code {
+    [Parameter, EditorRequired]
+    public TextInputModelCore Model { get; set; } = default!;
+
+    private Task OnChanged(string v)
+    {
+        Model.Text = v ?? "";
+        return Task.CompletedTask;
+    }
+}

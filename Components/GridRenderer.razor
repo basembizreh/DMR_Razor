@@ -1,0 +1,26 @@
+﻿@using DMB.Core
+@using DMB.Core.Elements
+@using MudBlazor
+
+<MudGrid Spacing="2" Class="dmr-grid">
+    @for (int r = 0; r < Grid.Rows.Count; r++)
+    {
+        var row = Grid.Rows[r];
+
+        @for (int c = 0; c < row.Cells.Count; c++)
+        {
+            var cell = row.Cells[c];
+            <MudItem xs="@NormalizeSpan(cell.ColSpan)" Class="dmr-item">
+                <CellRenderer Cell="cell" />
+            </MudItem>
+        }
+    }
+</MudGrid>
+
+@code {
+    [Parameter, EditorRequired]
+    public GridModelCore Grid { get; set; } = default!;
+
+    private int NormalizeSpan(int span)
+        => span <= 0 ? 12 : (span > 12 ? 12 : span);
+}

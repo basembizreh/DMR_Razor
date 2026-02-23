@@ -1,0 +1,17 @@
+﻿<MudDatePicker Date="@Model.Value"
+               DateChanged="OnChanged"
+               Variant="Variant.Outlined"
+               Disabled="@Model.Disabled"
+               PickerVariant="PickerVariant.Inline"
+               Dense="true" />
+
+@code {
+    [Parameter, EditorRequired]
+    public DatePickerModelCore Model { get; set; } = default!;
+
+    private Task OnChanged(DateTime? d)
+    {
+        Model.Value = d;
+        return Task.CompletedTask;
+    }
+}

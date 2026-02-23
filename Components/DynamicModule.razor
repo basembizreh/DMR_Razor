@@ -1,19 +1,32 @@
 ﻿@using DMB.Core
 @using DMB.Core.Dmf
-<h3>DynamicModule</h3>
+@using DMB.Core.Elements
 
 @inject ModuleStateCore moduleState;
 @inject DmfServiceCore DmfService 
+
+@if (_grid is null)
+{
+    <div>Loading module...</div>
+}
+else
+{
+    <GridRenderer Grid="_grid" />
+}
+
 
 @code {
     [Parameter]
     public string? ModuleFileName { get; set; }
 
+    private GridModelCore? _grid;
+
     protected override Task OnInitializedAsync()
     {
         if (!string.IsNullOrWhiteSpace(this.ModuleFileName))
         {
-            var grid = this.DmfService.Load(moduleState, this.ModuleFileName);
+            this._grid = this.DmfService.Load(moduleState, this.ModuleFileName);
+            
         }
         return base.OnInitializedAsync();
     }

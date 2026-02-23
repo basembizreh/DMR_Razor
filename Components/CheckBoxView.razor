@@ -1,0 +1,14 @@
+﻿<MudCheckBox T="bool"
+             Disabled="@Model.Disabled"
+             Label="@Model.Label" />
+
+@code {
+    [Parameter, EditorRequired]
+    public CheckBoxModelCore Model { get; set; } = default!;
+
+    private Task OnChanged(bool v)
+    {
+        //Model.Value = v;
+        return Task.CompletedTask;
+    }
+}
