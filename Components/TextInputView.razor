@@ -1,9 +1,15 @@
-﻿<MudTextField T="string"
-              Value="@Model.Text"
-              ValueChanged="OnChanged"
-              Immediate="true"
-              Variant="Variant.Outlined"
-              Margin="Margin.Dense" />
+﻿@using DMB.Core
+@using MudBlazor
+
+<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
+    <MudTextField T="string"
+                  Label="@Model.Label"
+                  Variant="@Model.Variant"
+                  AdornmentColor="@Model.Color"
+                  Margin="@Model.Margin"
+                  Value="@Model.Text"
+                  ValueChanged="OnChanged" />
+</div>
 
 @code {
     [Parameter, EditorRequired]
@@ -11,7 +17,7 @@
 
     private Task OnChanged(string v)
     {
-        Model.Text = v ?? "";
+        Model.Text = v;
         return Task.CompletedTask;
     }
 }

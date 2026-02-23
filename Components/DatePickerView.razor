@@ -1,17 +1,20 @@
-﻿<MudDatePicker Date="@Model.Value"
-               DateChanged="OnChanged"
-               Variant="Variant.Outlined"
-               Disabled="@Model.Disabled"
-               PickerVariant="PickerVariant.Inline"
-               Dense="true" />
+﻿<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
+    <MudDatePicker Label="@Model.Label"
+                   Variant="@Model.Variant"
+                   Color="@Model.Color"
+                   Margin="@Model.Margin"
+                   Disabled="@Model.Disabled"
+                   Date="@Model.Value"
+                   DateChanged="OnChanged" />
+</div>
 
 @code {
     [Parameter, EditorRequired]
     public DatePickerModelCore Model { get; set; } = default!;
 
-    private Task OnChanged(DateTime? d)
+    private Task OnChanged(DateTime? v)
     {
-        Model.Value = d;
+        Model.Value = v;
         return Task.CompletedTask;
     }
 }

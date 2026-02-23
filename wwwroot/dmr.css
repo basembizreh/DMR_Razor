@@ -1,0 +1,36 @@
+﻿/* Grid spacing */
+.dmr-grid {
+    width: 100%;
+}
+
+/* MudItem wrapper */
+.dmr-item {
+    min-width: 0;
+}
+
+/* Cell container */
+.dmr-cell {
+    width: 100%;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
+}
+
+    .dmr-cell > * {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+.el-wrap {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+    .el-wrap > * {
+        width: 100%;
+        max-width: 100%;
+    }

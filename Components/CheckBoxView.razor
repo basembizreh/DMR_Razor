@@ -1,6 +1,15 @@
-﻿<MudCheckBox T="bool"
-             Disabled="@Model.Disabled"
-             Label="@Model.Label" />
+﻿@using DMB.Core
+@using MudBlazor
+
+<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
+    <MudCheckBox T="bool"
+                 Label="@Model.Label"
+                 Color="@Model.Color"
+                 Disabled="@Model.Disabled"
+                 ReadOnly="@Model.ReadOnly"
+                 Value="@Model.Checked"
+                 ValueChanged="OnChanged" />
+</div>
 
 @code {
     [Parameter, EditorRequired]
@@ -8,7 +17,9 @@
 
     private Task OnChanged(bool v)
     {
-        //Model.Value = v;
+        if (!Model.ReadOnly)
+            Model.Checked = v;
+
         return Task.CompletedTask;
     }
 }

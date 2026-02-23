@@ -1,10 +1,16 @@
-﻿<MudButton Variant="@Model.Variant"
-           Color="@Model.Color"
-           StartIcon="@Model.StartIconKey">
-    @Model.Text
-</MudButton>
+﻿<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
+    <MudButton Variant="@Model.Variant"
+               Color="@Model.Color"
+               StartIcon="@StartIcon"
+               EndIcon="@EndIcon">
+        @Model.Text
+    </MudButton>
+</div>
 
 @code {
     [Parameter, EditorRequired]
     public ButtonModelCore Model { get; set; } = default!;
+
+    private string? StartIcon => MudIconResolver.Resolve(Model.StartIconKey);
+    private string? EndIcon => MudIconResolver.Resolve(Model.EndIconKey);
 }

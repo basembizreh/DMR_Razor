@@ -1,6 +1,14 @@
-﻿<MudText Typo="@Model.Typo">
-    @Model.Text
-</MudText>
+﻿<div class="el-wrap @Model.Class"
+     style="@Model.Style"
+     id="@Model.Id">
+
+    <MudText Typo="@Model.Typo"
+             Align="@Model.TextAlign"
+             Color="@Model.Color">
+        @Model.Text
+    </MudText>
+
+</div>
 
 @code {
     [Parameter, EditorRequired]

@@ -1,19 +1,15 @@
 ﻿@using DMB.Core
-@using DMB.Core.Elements
-@using MudBlazor
 @using System.Drawing
 
-<div class="dmr-cell" style="@GetAlignStyle()">
+<div class="@($"dmr-cell {Cell.Class}")"
+     style="@BuildCellStyle()"
+     id="@Cell.Id">
 
-    @if (Cell.Element is null)
-    {
-        <div class="dmr-empty"></div>
-    }
-    else if (Cell.Element is GridModelCore subGrid)
+    @if (Cell.Element is GridModelCore subGrid)
     {
         <GridRenderer Grid="subGrid" />
     }
-    else
+    else if (Cell.Element is not null)
     {
         <ElementRenderer Element="Cell.Element" />
     }
@@ -21,16 +17,20 @@
 </div>
 
 @code {
-    [Parameter, EditorRequired] public CellModelCore Cell { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public CellModelCore Cell { get; set; } = default!;
 
-    private string GetAlignStyle()
+    private string BuildCellStyle()
     {
-        // Flex container alignment based on your ContentAlignment enum
+        // preserve user style + add alignment rules
+        var baseStyle = Cell.Style?.Trim();
+        if (!string.IsNullOrEmpty(baseStyle) && !baseStyle.EndsWith(";"))
+            baseStyle += ";";
+
         var jc = ToJustifyContent(Cell.HorizontalAlignment);
         var ai = ToAlignItems(Cell.VerticalAlignment);
 
-        // important: make cell fill its MudItem area
-        return $"display:flex; width:100%; height:100%; justify-content:{jc}; align-items:{ai};";
+        return $"{baseStyle}display:flex;width:100%;height:100%;justify-content:{jc};align-items:{ai};";
     }
 
     private static string ToJustifyContent(ContentAlignment a) => a switch

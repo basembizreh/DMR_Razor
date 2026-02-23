@@ -1,16 +1,19 @@
-﻿<MudTimePicker Time="@TimeSpan.FromMinutes(60)"
-               TimeChanged="OnChanged"
-               Variant="Variant.Outlined"
-               Disabled="@Model.Disabled"
-               PickerVariant="PickerVariant.Inline" />
+﻿<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
+    <MudTimePicker Label="@Model.Label"
+                   Variant="@Model.Variant"
+                   Color="@Model.Color"
+                   Margin="@Model.Margin"
+                   Disabled="@Model.Disabled"
+                   Time="@Model.Value"
+                   TimeChanged="OnChanged" />
+</div>
 
 @code {
-    [Parameter, EditorRequired]
-    public TimePickerModelCore Model { get; set; } = default!;
+    [Parameter, EditorRequired] public TimePickerModelCore Model { get; set; } = default!;
 
-    private Task OnChanged(TimeSpan? t)
+    private Task OnChanged(TimeSpan? v)
     {
-        Model.Value = t;
+        Model.Value = v;
         return Task.CompletedTask;
     }
 }

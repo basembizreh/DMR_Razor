@@ -1,0 +1,22 @@
+﻿@using DMB.Core
+@using MudBlazor
+
+<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
+    <MudSwitch T="bool"
+               Label="@Model.Label"
+               Color="@Model.Color"
+               Disabled="@Model.Disabled"
+               Value="@Model.Checked"
+               ValueChanged="OnChanged" />
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public SwitchModelCore Model { get; set; } = default!;
+
+    private Task OnChanged(bool v)
+    {
+        Model.Checked = v;
+        return Task.CompletedTask;
+    }
+}
