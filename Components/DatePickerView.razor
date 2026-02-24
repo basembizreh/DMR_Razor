@@ -4,7 +4,7 @@
                    Color="@Model.Color"
                    Margin="@Model.Margin"
                    Disabled="@Model.Disabled"
-                   Date="@Model.Value"
+                   Date="@((DateTime?)Model.Value)"
                    DateChanged="OnChanged" />
 </div>
 

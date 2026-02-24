@@ -7,7 +7,7 @@
                   Variant="@Model.Variant"
                   AdornmentColor="@Model.Color"
                   Margin="@Model.Margin"
-                  Value="@Model.Text"
+                  Value="@((string?)Model.Value)"
                   ValueChanged="OnChanged" />
 </div>
 
@@ -17,7 +17,7 @@
 
     private Task OnChanged(string v)
     {
-        Model.Text = v;
+        Model.Value = v;
         return Task.CompletedTask;
     }
 }
