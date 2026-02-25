@@ -4,7 +4,8 @@
                    Color="@Model.Color"
                    Margin="@Model.Margin"
                    Disabled="@Model.Disabled"
-                   Date="@((DateTime?)Model.Value)"
+                   @* Date="@((DateTime?)Model.Value)" *@
+                   Date="@DateValue"
                    DateChanged="OnChanged" />
 </div>
 
@@ -14,7 +15,21 @@
 
     private Task OnChanged(DateTime? v)
     {
-        Model.Value = v;
+        Model.Value = v?.ToString(Model.DateFormat);
         return Task.CompletedTask;
+    }
+
+    private DateTime? DateValue
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(Model.Value))
+            {
+                return DateTime.TryParseExact(Model.Value, Model.DateFormat, null, System.Globalization.DateTimeStyles.None, out var dt)
+                    ? dt
+                    : null;
+            }
+            return null;
+        }
     }
 }
