@@ -19,7 +19,7 @@
 }
 
     .dmr-cell > * {
-        max-width: 100%;
+        flex: 1 1 auto;
         min-width: 0;
     }
 
@@ -34,3 +34,7 @@
         width: 100%;
         max-width: 100%;
     }
+
+.dmr-item {
+    padding: 0 !important;
+}

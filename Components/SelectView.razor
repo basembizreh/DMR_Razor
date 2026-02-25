@@ -1,24 +1,54 @@
-﻿<MudSelectExtended T="string"
-                   Dense="true"
-                   Variant="Variant.Outlined"
-                   Value="@("Test Item")"
-                   ValueChanged="OnChanged"
-                   Disabled="@Model.Disabled">
+﻿<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
 
-    @* @if (Model.Items is not null)
+    <MudSelectExtended T="DatasetRowModelCore"
+                       Dense="@Model.Dense"
+                       FullWidth="true"
+                       Variant="@Model.Variant"
+                       Margin="@Model.Margin"
+                       ValueChanged="OnChanged"
+                       Disabled="@Model.Disabled"
+                       ItemCollection="Rows"
+                       AnchorOrigin="@Model.AnchorOrigin"
+                       ToStringFunc="@(x => x is null ? "" : (string.IsNullOrWhiteSpace(Model.TextField) ? "" :  x.Values[Model.TextField]))">
+
+        @* @if (Model.Items is not null)
     {
         foreach (var item in Model.Items)
         {
             <MudSelectItem T="string" Value="@item.Value">@item.Text</MudSelectItem>
         }
     } *@
-</MudSelectExtended>
+    </MudSelectExtended>
+</div>
 
 @code {
     [Parameter, EditorRequired]
     public SelectModelCore Model { get; set; } = default!;
 
-    private Task OnChanged(string? v)
+    public List<DatasetRowModelCore> Rows { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        this.LoadData();
+        base.OnInitialized();
+    }
+
+    private void LoadData()
+    {
+        if (this.Model.ModuleStateCore is null || string.IsNullOrWhiteSpace(this.Model.Dataset))
+            return;
+
+        var dataset = this.Model.ModuleStateCore.AllItems.OfType<DatasetModelCore<DatasetFieldModelCore>>()
+            .Cast<DatasetModelCore<DatasetFieldModelCore>>()
+            .FirstOrDefault(p => p.Id == this.Model.Dataset);
+
+        if (dataset == null)
+            throw new Exception("Invalid dataset");
+
+        this.Rows = dataset.Rows;
+    }
+
+    private Task OnChanged(DatasetRowModelCore? v)
     {
         //Model.Value = v;
         return Task.CompletedTask;
