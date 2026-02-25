@@ -1,11 +1,14 @@
-﻿<div class="el-wrap @Model.Class"
-     style="@Model.Style"
+﻿@using DMB.Core.Evaluator
+@inject ExpressionEvaluator Evaluator
+
+<div class="el-wrap @Model.Class?.Evaluate(this.Evaluator)"
+     style="@Model.Style?.Evaluate(this.Evaluator)"
      id="@Model.Id">
 
     <MudText Typo="@Model.Typo"
              Align="@Model.TextAlign"
              Color="@Model.Color">
-        @Model.Text
+        @Model.Text?.Evaluate(this.Evaluator)
     </MudText>
 
 </div>
