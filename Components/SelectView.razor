@@ -1,4 +1,7 @@
-﻿<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
+﻿@using DMB.Core.Evaluator
+@inject ExpressionEvaluator Evaluator
+
+<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
 
     <MudSelectExtended T="DatasetRowModelCore"
                        Dense="@Model.Dense"
@@ -9,7 +12,13 @@
                        Disabled="@Model.Disabled"
                        ItemCollection="Rows"
                        AnchorOrigin="@Model.AnchorOrigin"
-                       ToStringFunc="@(x => x is null ? "" : (string.IsNullOrWhiteSpace(Model.TextField) ? "" :  x.Values[Model.TextField]))">
+                       ToStringFunc="@(x =>
+                           x is null
+                               ? string.Empty
+                               : (string.IsNullOrWhiteSpace(Model.TextField)
+                                   ? string.Empty
+                                   : x.GetString(Model.TextField))
+)">
 
         @* @if (Model.Items is not null)
     {
@@ -38,13 +47,7 @@
         if (this.Model.ModuleStateCore is null || string.IsNullOrWhiteSpace(this.Model.Dataset))
             return;
 
-        var dataset = this.Model.ModuleStateCore.AllItems.OfType<DatasetModelCore<DatasetFieldModelCore>>()
-            .Cast<DatasetModelCore<DatasetFieldModelCore>>()
-            .FirstOrDefault(p => p.Id == this.Model.Dataset);
-
-        if (dataset == null)
-            throw new Exception("Invalid dataset");
-
+        var dataset = StaticDataResolver.CalculateData(this.Model.Dataset, this.Model.ModuleStateCore, this.Evaluator);
         this.Rows = dataset.Rows;
     }
 

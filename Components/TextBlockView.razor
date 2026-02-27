@@ -6,8 +6,8 @@
      id="@Model.Id">
 
     <MudText Typo="@Model.Typo"
-             Align="@TextAlgin"
-             Color="@Model.Color">
+             Align="@(ExpressionablePropertyResolver<Align>.Resolve(Model.TextAlign, Evaluator))"
+             Color="@(ExpressionablePropertyResolver<Color>.Resolve(Model.Color, Evaluator))">
         @Model.Text?.Evaluate(this.Evaluator)
     </MudText>
 
@@ -16,28 +16,5 @@
 @code {
     [Parameter, EditorRequired]
     public TextBlockModelCore Model { get; set; } = default!;
-
-    public Align TextAlgin
-    {
-        get
-        {
-            if (this.Model.TextAlign is null)
-                return Align.Left; // Default value if TextAlign is not set
-
-            if (this.Model.TextAlign.EnableExpression)
-            {
-                try
-                {
-                    var align =  Enum.Parse<Align>(this.Model.TextAlign.Expression.Evaluate(this.Evaluator).ToString()!);
-                    return align;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error evaluating TextAlign expression: {ex.Message}");
-                    return Align.Left; // Default value in case of error
-                }
-            }
-            return this.Model.TextAlign.Value;
-        }
-    }
 }
+    

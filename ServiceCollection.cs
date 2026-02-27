@@ -12,11 +12,8 @@ namespace DMR_Razor
 {
     public static class ServiceCollection
     {
-        private static IServiceCollection? _services;
-
         public static IServiceCollection AddDmrServices(this IServiceCollection services)
         {
-            _services = services;
             services.TryAddSingleton<DMB.Core.ModuleStateCore>();
             services.TryAddSingleton<DMB.Core.Dmf.DmfServiceCore<DMB.Core.Elements.DatasetModelCore<DMB.Core.Elements.DatasetFieldModelCore>, DMB.Core.Elements.DatasetFieldModelCore>>();
             services.TryAddSingleton<DMB.Core.Evaluator.ExpressionEvaluator>();

@@ -1,6 +1,9 @@
-﻿<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
+﻿@using DMB.Core.Evaluator
+@inject ExpressionEvaluator Evaluator
+
+<div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
     <MudButton Variant="@Model.Variant"
-               Color="@Model.Color"
+               Color="@(ExpressionablePropertyResolver<Color>.Resolve(Model.Color, Evaluator))"
                StartIcon="@StartIcon"
                EndIcon="@EndIcon">
         @Model.Text
@@ -13,4 +16,6 @@
 
     private string? StartIcon => MudIconResolver.Resolve(Model.StartIconKey);
     private string? EndIcon => MudIconResolver.Resolve(Model.EndIconKey);
+
+
 }
