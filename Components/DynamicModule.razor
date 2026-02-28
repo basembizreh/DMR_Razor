@@ -1,5 +1,7 @@
 ﻿@using DMB.Core.Dmf
 
+@implements IDisposable
+
 @inject ModuleStateCore moduleState;
 @inject DmfServiceCore<DatasetModelCore<DatasetFieldModelCore>, DatasetFieldModelCore> DmfService
 
@@ -25,6 +27,19 @@ else
         {
             this._grid = this.DmfService.Load(moduleState, this.ModuleFileName);
         }
+        this.moduleState.StateChanged += ModuleState_StateChanged;
         return base.OnInitializedAsync();
     }
+
+    public void Dispose()
+    {
+        this.moduleState.StateChanged -= ModuleState_StateChanged;
+    }
+
+    private void ModuleState_StateChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+
 }

@@ -1,5 +1,5 @@
-﻿@using DMB.Core
-@using MudBlazor
+﻿@using DMB.Core.Evaluator
+@inject ExpressionEvaluator Evaluator
 
 <div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
     <MudTextField T="string"
@@ -8,7 +8,8 @@
                   AdornmentColor="@Model.Color"
                   Margin="@Model.Margin"
                   Value="@((string?)Model.Value)"
-                  ValueChanged="OnChanged" />
+                  ValueChanged="OnChanged"
+                  DebounceInterval="@Model.DebounceInterval" />
 </div>
 
 @code {
@@ -18,6 +19,7 @@
     private Task OnChanged(string v)
     {
         Model.Value = v;
+        this.Model.ModuleStateCore.RaiseStateChanged();
         return Task.CompletedTask;
     }
 }

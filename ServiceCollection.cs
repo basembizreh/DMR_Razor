@@ -14,9 +14,11 @@ namespace DMR_Razor
     {
         public static IServiceCollection AddDmrServices(this IServiceCollection services)
         {
-            services.TryAddSingleton<DMB.Core.ModuleStateCore>();
-            services.TryAddSingleton<DMB.Core.Dmf.DmfServiceCore<DMB.Core.Elements.DatasetModelCore<DMB.Core.Elements.DatasetFieldModelCore>, DMB.Core.Elements.DatasetFieldModelCore>>();
-            services.TryAddSingleton<DMB.Core.Evaluator.ExpressionEvaluator>();
+            services.TryAddScoped<DMB.Core.ModuleStateCore>();
+            services.TryAddScoped<DMB.Core.Evaluator.ExpressionEvaluator>();
+            services.TryAddScoped<DMB.Core.Dmf.DmfServiceCore<
+                DMB.Core.Elements.DatasetModelCore<DMB.Core.Elements.DatasetFieldModelCore>,
+                DMB.Core.Elements.DatasetFieldModelCore>>();
 
             return services;
         }
@@ -25,7 +27,7 @@ namespace DMR_Razor
         {
             if (string.IsNullOrWhiteSpace(expression))
                 return expression;
-            if (expression.StartsWith("="))
+            if (expression.StartsWith('='))
             {
                 var expr = expression.Substring(1);
                 return evaluator.Evaluate(expr);

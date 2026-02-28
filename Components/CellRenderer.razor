@@ -1,5 +1,8 @@
 ﻿@using DMB.Core
 @using System.Drawing
+@using DMB.Core.Evaluator
+
+@inject ExpressionEvaluator Evaluator
 
 <div class="@($"dmr-cell {Cell.Class}")"
      style="@BuildCellStyle()"
@@ -9,7 +12,7 @@
     {
         <GridRenderer Grid="subGrid" />
     }
-    else if (Cell.Element is not null)
+    else if (Cell.Element is not null && IsVisible(Cell.Element))
     {
         <ElementRenderer Element="Cell.Element" />
     }
@@ -19,6 +22,19 @@
 @code {
     [Parameter, EditorRequired]
     public CellModelCore Cell { get; set; } = default!;
+
+    public bool IsVisible(ElementModel element)
+    {
+        try
+        {
+            var value = ExpressionablePropertyResolver<bool>.Resolve(element.Visible, Evaluator);
+            return value;
+        }
+        catch
+        {
+            throw;
+        }
+    }
 
     private string BuildCellStyle()
     {

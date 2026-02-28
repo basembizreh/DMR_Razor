@@ -17,6 +17,7 @@
     private Task OnChanged(bool v)
     {
         Model.Checked = v;
+        this.Model.ModuleStateCore.RaiseStateChanged();
         return Task.CompletedTask;
     }
 }
