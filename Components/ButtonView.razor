@@ -6,7 +6,7 @@
                Color="@(ExpressionablePropertyResolver<Color>.Resolve(Model.Color, Evaluator))"
                StartIcon="@StartIcon"
                EndIcon="@EndIcon">
-        @Model.Text
+        @Model.Text.Evaluate(Evaluator)
     </MudButton>
 </div>
 
@@ -16,6 +16,4 @@
 
     private string? StartIcon => MudIconResolver.Resolve(Model.StartIconKey);
     private string? EndIcon => MudIconResolver.Resolve(Model.EndIconKey);
-
-
 }

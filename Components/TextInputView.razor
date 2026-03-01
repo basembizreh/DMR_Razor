@@ -5,7 +5,7 @@
     <MudTextField T="string"
                   Label="@Model.Label"
                   Variant="@Model.Variant"
-                  AdornmentColor="@Model.Color"
+                  AdornmentColor="@(ExpressionablePropertyResolver<MudBlazor.Color>.Resolve(Model.Color, Evaluator))"
                   Margin="@Model.Margin"
                   Value="@((string?)Model.Value)"
                   ValueChanged="OnChanged"
