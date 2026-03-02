@@ -3,7 +3,7 @@
 @implements IDisposable
 
 @inject ModuleStateCore moduleState;
-@inject DmfServiceCore<DatasetModelCore<DatasetFieldModelCore>, DatasetFieldModelCore> DmfService
+@inject DmfServiceCore<DatasetModelCore<DatasetFieldModelCore>, DatasetFieldModelCore, DataGridColumnModelCore> DmfService
 
 @if (_grid is null)
 {

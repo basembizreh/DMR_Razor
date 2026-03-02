@@ -1,4 +1,5 @@
-﻿using DMB.Core.Evaluator;
+﻿using DMB.Core.Elements;
+using DMB.Core.Evaluator;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -18,7 +19,7 @@ namespace DMR_Razor
             services.TryAddScoped<DMB.Core.Evaluator.ExpressionEvaluator>();
             services.TryAddScoped<DMB.Core.Dmf.DmfServiceCore<
                 DMB.Core.Elements.DatasetModelCore<DMB.Core.Elements.DatasetFieldModelCore>,
-                DMB.Core.Elements.DatasetFieldModelCore>>();
+                DMB.Core.Elements.DatasetFieldModelCore, DataGridColumnModelCore>>();
 
             return services;
         }
