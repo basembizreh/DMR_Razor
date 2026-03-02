@@ -1,0 +1,103 @@
+﻿@using DMB.Core.Evaluator
+@using DMB.Core
+
+@inject ExpressionEvaluator Evaluator
+@inject ModuleStateCore ModuleState
+
+@if (this.Visible)
+{
+    <MudDataGrid T="DatasetRowModelCore" Items="Rows"
+                 Striped="Model.Striped"
+                 Bordered="Model.Bordered"
+                 Hover="Model.Hover"
+                 Dense="Model.Dense">
+        <Columns>
+            @{
+                var ds = this.GetDataset();
+                if (ds != null)
+                {
+                    foreach (var item in this.Model.Columns)
+                    {
+                        var field = ds.Fields.FirstOrDefault(p => p.Name == item.Field);
+                        if (field != null)
+                        {
+                            if (field.DataType == DataType.String)
+                            {
+                                <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                Property="@(x => Convert.ToString(x.Values[field.Name]))"
+                                                Filterable="item.EnableFitering"
+                                                Sortable="item.EnableSorting"
+                                                Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                Format="@(this.GetColumnFormat(item))">
+
+                                </PropertyColumn>
+                            }
+                            if (field.DataType == DataType.DateTime)
+                            {
+                                <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                Property="@(x => Convert.ToDateTime(x.Values[field.Name]))"
+                                                Filterable="item.EnableFitering"
+                                                Sortable="item.EnableSorting"
+                                                Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                Format="@(this.GetColumnFormat(item))">
+
+                                </PropertyColumn>
+                            }
+                        }
+                    }
+                }
+            }
+        </Columns>
+
+    </MudDataGrid>
+}
+
+@code {
+    private DatasetModelCore<DatasetFieldModelCore>? _dataset;
+
+    [Parameter, EditorRequired]
+    public DataGridModelCore<DataGridColumnModelCore> Model { get; set; } = default!;
+
+    public List<DatasetRowModelCore> Rows { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        this.LoadData();
+        base.OnInitialized();
+    }
+
+    private bool Visible
+    {
+        get
+        {
+            return ExpressionablePropertyResolver<bool>.Resolve(this.Model.Visible, Evaluator);
+        }
+    }
+
+    private void LoadData()
+    {
+        if (this.Model.ModuleStateCore is null || string.IsNullOrWhiteSpace(this.Model.Dataset))
+            return;
+
+        var dataset = StaticDataResolver.CalculateData(this.Model.Dataset, this.Model.ModuleStateCore, this.Evaluator);
+        this.Rows = dataset.Rows;
+    }
+
+    private DatasetModelCore<DatasetFieldModelCore>? GetDataset()
+    {
+        if (this._dataset == null)
+        {
+            this._dataset = this.ModuleState.AllItems
+                .OfType<DatasetModelCore<DatasetFieldModelCore>>()
+                .Cast<DatasetModelCore<DatasetFieldModelCore>>()
+                .FirstOrDefault(p => p.Id == this.Model.Dataset);
+        }
+        return this._dataset;
+    }
+
+    private string? GetColumnFormat(DataGridColumnModelCore column)
+    {
+        var format = ExpressionablePropertyResolver<string?>.Resolve(column.Format, Evaluator);
+        return string.IsNullOrWhiteSpace(format) ? null : format;
+    }
+}

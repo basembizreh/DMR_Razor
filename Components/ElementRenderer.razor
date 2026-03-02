@@ -40,6 +40,10 @@
         <ImageView Model="im" />
         break;
 
+    case DataGridModelCore<DataGridColumnModelCore> dataGrid:
+        <DataGridView Model="dataGrid" />
+        break;
+
     default:
         <div class="dmr-unknown">@Element.GetType().Name</div>
         break;
