@@ -14,7 +14,6 @@ else
     <GridRenderer Grid="_grid" />
 }
 
-
 @code {
     [Parameter]
     public string? ModuleFileName { get; set; }
@@ -25,7 +24,7 @@ else
     {
         if (!string.IsNullOrWhiteSpace(this.ModuleFileName))
         {
-            this._grid = this.DmfService.Load(moduleState, this.ModuleFileName);
+            this._grid = this.DmfService.Load(moduleState, this.ModuleFileName, false   );
         }
         this.moduleState.StateChanged += this.ModuleState_StateChanged;
         return base.OnInitializedAsync();
