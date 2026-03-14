@@ -19,7 +19,7 @@
     private Task OnChanged(string v)
     {
         Model.Value = v;
-        this.Model.ModuleStateCore.RaiseStateChanged();
+        this.Model.ModuleDocumentCore.RaiseStateChanged();
         return Task.CompletedTask;
     }
 }

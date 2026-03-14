@@ -11,10 +11,10 @@ namespace DMR_Razor
 {
 	public static class StaticDataResolver
 	{
-		public static DatasetModelCore<DatasetFieldModelCore> CalculateData(string datasetId, ModuleStateCore state
+		public static DatasetModelCore<DatasetFieldModelCore> CalculateData(string datasetId, ModuleDocumentCore document
 			, ExpressionEvaluator evaluator)
 		{
-			var dataset = state.AllItems.OfType<DatasetModelCore<DatasetFieldModelCore>>()
+			var dataset = document.AllItems.OfType<DatasetModelCore<DatasetFieldModelCore>>()
 		   .Cast<DatasetModelCore<DatasetFieldModelCore>>()
 		   .FirstOrDefault(p => p.Id == datasetId);
 

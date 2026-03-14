@@ -2,7 +2,7 @@
 
 @implements IDisposable
 
-@inject ModuleStateCore moduleState;
+@inject ModuleDocumentCore moduleDocument;
 @inject DmfServiceCore<DatasetModelCore<DatasetFieldModelCore>, DatasetFieldModelCore, DataGridColumnModelCore> DmfService
 
 @if (_grid is null)
@@ -24,15 +24,15 @@ else
     {
         if (!string.IsNullOrWhiteSpace(this.ModuleFileName))
         {
-            this._grid = this.DmfService.Load(moduleState, this.ModuleFileName, false   );
+            this._grid = this.DmfService.Load(this.moduleDocument, this.ModuleFileName, false);
         }
-        this.moduleState.StateChanged += this.ModuleState_StateChanged;
+        this.moduleDocument.StateChanged += this.ModuleState_StateChanged;
         return base.OnInitializedAsync();
     }
 
     public void Dispose()
     {
-        this.moduleState.StateChanged -= this.ModuleState_StateChanged;
+        this.moduleDocument.StateChanged -= this.ModuleState_StateChanged;
     }
 
     private void ModuleState_StateChanged()
