@@ -15,7 +15,7 @@ namespace DMR_Razor
     {
         public static IServiceCollection AddDmrServices(this IServiceCollection services)
         {
-            services.TryAddScoped<DMB.Core.ModuleStateCore>();
+            services.TryAddScoped<DMB.Core.ModuleDocumentCore>();
             services.TryAddScoped<DMB.Core.Evaluator.ExpressionEvaluator>();
             services.TryAddScoped<DMB.Core.Dmf.DmfServiceCore<
                 DMB.Core.Elements.DatasetModelCore<DMB.Core.Elements.DatasetFieldModelCore>,

@@ -3,7 +3,7 @@
 @using System.Globalization
 
 @inject ExpressionEvaluator Evaluator
-@inject ModuleStateCore ModuleState
+@inject ModuleDocumentCore ModuleDocument
 
 @if (this.Visible)
 {
@@ -146,7 +146,7 @@
     {
         if (this._dataset == null)
         {
-            this._dataset = this.ModuleState.AllItems
+            this._dataset = this.ModuleDocument.AllItems
                 .OfType<DatasetModelCore<DatasetFieldModelCore>>()
                 .Cast<DatasetModelCore<DatasetFieldModelCore>>()
                 .FirstOrDefault(p => p.Id == this.Model.Dataset);
