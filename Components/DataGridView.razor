@@ -44,7 +44,7 @@
                                                 Sortable="item.EnableSorting"
                                                 Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
                                                 Format="@(this.GetColumnFormat(item))">
-
+                                    
                                 </PropertyColumn>
                             }
                             if (field.DataType == DataType.DateOnly)
