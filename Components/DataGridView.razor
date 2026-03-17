@@ -12,9 +12,9 @@
                  Bordered="Model.Bordered"
                  Hover="Model.Hover"
                  Dense="Model.Dense">
-                 <ToolBarContent>
+        <ToolBarContent>
 
-                 </ToolBarContent>
+        </ToolBarContent>
         <Columns>
             @{
                 var ds = this.GetDataset();
@@ -27,14 +27,29 @@
                         {
                             if (field.DataType == DataType.String)
                             {
-                                <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
-                                                Property="@(x => Convert.ToString(x.Values[field.Name]))"
-                                                Filterable="item.EnableFitering"
-                                                Sortable="item.EnableSorting"
-                                                Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
-                                                Format="@(this.GetColumnFormat(item))">
+                                @if (item.CellTemplate?.Enabled == true && item.CellTemplate.Content != null)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToString(x.Values[field.Name]))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
 
-                                </PropertyColumn>
+                                        <CellTemplate Context="context">
+                                            <GridRenderer Grid="item.CellTemplate.Content" />
+                                        </CellTemplate>
+                                    </PropertyColumn>
+                                }
+                                else
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToString(x.Values[field.Name]))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))" />
+                                }
                             }
                             if (field.DataType == DataType.DateTime)
                             {
@@ -44,7 +59,7 @@
                                                 Sortable="item.EnableSorting"
                                                 Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
                                                 Format="@(this.GetColumnFormat(item))">
-                                    
+
                                 </PropertyColumn>
                             }
                             if (field.DataType == DataType.DateOnly)
@@ -159,4 +174,22 @@
         var format = ExpressionablePropertyResolver<string?>.Resolve(column.Format, Evaluator);
         return string.IsNullOrWhiteSpace(format) ? null : format;
     }
+
+    private bool HasCellTemplate(DataGridColumnModelCore column)
+    {
+        return column.CellTemplate is not null
+               && column.CellTemplate.Enabled
+               && column.CellTemplate.Content is not null;
+    }
+
+    private RenderFragment RenderCellTemplate(DataGridColumnModelCore column, DatasetRowModelCore row) => builder =>
+{
+    if (column.CellTemplate?.Content is null)
+        return;
+
+    builder.OpenComponent(0, typeof(GridRenderer));
+    builder.AddAttribute(1, "Model", column.CellTemplate.Content);
+    builder.AddAttribute(2, "CurrentRow", row);
+    builder.CloseComponent();
+};
 }
