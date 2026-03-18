@@ -1,47 +1,47 @@
 ﻿@switch (Element)
 {
     case TextBlockModelCore tb:
-        <TextBlockView Model="tb" />
+        <TextBlockView Model="tb" CurrentRow="CurrentRow" />
         break;
 
     case TextInputModelCore ti:
-        <TextInputView Model="ti" />
+        <TextInputView Model="ti" CurrentRow="CurrentRow" />
         break;
 
     case SelectModelCore sel:
-        <SelectView Model="sel" />
+        <SelectView Model="sel" CurrentRow="CurrentRow" />
         break;
 
     case DatePickerModelCore dp:
-        <DatePickerView Model="dp" />
+        <DatePickerView Model="dp" CurrentRow="CurrentRow" />
         break;
 
     case TimePickerModelCore tp:
-        <TimePickerView Model="tp" />
+        <TimePickerView Model="tp" CurrentRow="CurrentRow" />
         break;
 
     case RadioButtonModelCore rb:
-        <RadioButtonView Model="rb" />
+        <RadioButtonView Model="rb" CurrentRow="CurrentRow"/>
         break;
 
     case CheckBoxModelCore cb:
-        <CheckBoxView Model="cb" />
+        <CheckBoxView Model="cb" CurrentRow="CurrentRow" />
         break;
 
     case ButtonModelCore tb:
-        <ButtonView Model="tb" />
+        <ButtonView Model="tb" CurrentRow="CurrentRow" />
         break;
 
     case SwitchModelCore tb:
-        <SwitchView Model="tb" />
+        <SwitchView Model="tb" CurrentRow="CurrentRow" />
         break;
 
     case ImageModelCore im:
-        <ImageView Model="im" />
+        <ImageView Model="im" CurrentRow="CurrentRow" />
         break;
 
     case DataGridModelCore<DataGridColumnModelCore> dataGrid:
-        <DataGridView Model="dataGrid" />
+        <DataGridView Model="dataGrid" CurrentRow="CurrentRow" />
         break;
 
     default:
@@ -52,4 +52,7 @@
 @code {
     [Parameter, EditorRequired]
     public ElementModel Element { get; set; } = default!;
+
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
 }

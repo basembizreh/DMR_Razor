@@ -37,7 +37,7 @@
                                                     Format="@(this.GetColumnFormat(item))">
 
                                         <CellTemplate Context="context">
-                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                            <GridRenderer Grid="item.CellTemplate!.Content" CurrentRow="context.Item" />
                                         </CellTemplate>
                                     </PropertyColumn>
                                 }
@@ -51,7 +51,7 @@
                                                     Format="@(this.GetColumnFormat(item))">
 
                                         <CellTemplate Context="context">
-                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                            <GridRenderer Grid="item.CellTemplate!.Content" CurrentRow="context.Item" />
                                         </CellTemplate>
                                     </PropertyColumn>
 
@@ -66,7 +66,7 @@
                                                     Format="@(this.GetColumnFormat(item))">
 
                                         <CellTemplate Context="context">
-                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                            <GridRenderer Grid="item.CellTemplate!.Content" CurrentRow="context.Item" />
                                         </CellTemplate>
                                     </PropertyColumn>
                                 }
@@ -80,7 +80,7 @@
                                                     Format="@(this.GetColumnFormat(item))">
 
                                         <CellTemplate Context="context">
-                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                            <GridRenderer Grid="item.CellTemplate!.Content" CurrentRow="context.Item" />
                                         </CellTemplate>
 
                                     </PropertyColumn>
@@ -95,7 +95,7 @@
                                                     Format="@(this.GetColumnFormat(item))">
 
                                         <CellTemplate Context="context">
-                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                            <GridRenderer Grid="item.CellTemplate!.Content" CurrentRow="context.Item" />
                                         </CellTemplate>
                                     </PropertyColumn>
                                 }
@@ -109,7 +109,7 @@
                                                     Format="@(this.GetColumnFormat(item))">
 
                                         <CellTemplate Context="context">
-                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                            <GridRenderer Grid="item.CellTemplate!.Content" CurrentRow="context.Item" />
                                         </CellTemplate>
 
                                     </PropertyColumn>
@@ -218,8 +218,12 @@
 @code {
     private DatasetModelCore<DatasetFieldModelCore>? _dataset;
 
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
+
     [Parameter, EditorRequired]
     public DataGridModelCore<DataGridColumnModelCore> Model { get; set; } = default!;
+
 
     public List<DatasetRowModelCore> Rows { get; set; } = new();
 

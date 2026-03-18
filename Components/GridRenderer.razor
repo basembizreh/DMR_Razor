@@ -19,7 +19,7 @@
                     var cell = row.Cells[c];
 
                     <MudItem xs="@NormalizeSpan(cell.ColSpan)" Class="dmr-item">
-                        <CellRenderer Cell="cell" />
+                        <CellRenderer Cell="cell" CurrentRow="CurrentRow" />
                     </MudItem>
                 }
             </MudGrid>
@@ -31,6 +31,9 @@
 @code {
     [Parameter, EditorRequired]
     public GridModelCore Grid { get; set; } = default!;
+
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
 
     private int NormalizeSpan(int span)
         => span <= 0 ? 12 : (span > 12 ? 12 : span);
