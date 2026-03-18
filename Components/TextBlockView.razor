@@ -8,8 +8,7 @@
     <MudText Typo="@Model.Typo"
              Align="@(ExpressionablePropertyResolver<Align>.Resolve(Model.TextAlign, Evaluator))"
              Color="@(ExpressionablePropertyResolver<Color>.Resolve(Model.Color, Evaluator))">
-        @EvaluateExpression(Model.Text)
-        @* @Model.Text?.Evaluate(this.Evaluator) *@
+        @Model.Text?.Evaluate(this.Evaluator, this.CurrentRow)
     </MudText>
 
 </div>
@@ -20,12 +19,4 @@
 
     [Parameter]
     public DatasetRowModelCore? CurrentRow { get; set; }
-
-    private object? EvaluateExpression(string? expression)
-    {
-        if (CurrentRow != null)
-            return Evaluator.EvaluateForRow(expression, CurrentRow.Values);
-
-        return Evaluator.Evaluate(expression);
-    }
 }

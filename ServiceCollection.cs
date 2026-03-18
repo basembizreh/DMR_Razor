@@ -24,13 +24,18 @@ namespace DMR_Razor
             return services;
         }
 
-        public static object? Evaluate(this string expression, ExpressionEvaluator evaluator)
+        public static object? Evaluate(this string expression, ExpressionEvaluator evaluator,
+            DatasetRowModelCore? CurrentRow = null)
         {
             if (string.IsNullOrWhiteSpace(expression))
                 return expression;
             if (expression.StartsWith('='))
             {
                 var expr = expression.Substring(1);
+                if (CurrentRow != null)
+                {
+                    return evaluator.EvaluateForRow(expression, CurrentRow.Values);
+                }
                 return evaluator.Evaluate(expr);
             }
             return expression;
