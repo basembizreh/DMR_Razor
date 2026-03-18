@@ -25,9 +25,9 @@
                         var field = ds.Fields.FirstOrDefault(p => p.Name == item.Field);
                         if (field != null)
                         {
-                            if (field.DataType == DataType.String)
+                            @if (this.HasCellTemplate(item))
                             {
-                                @if (item.CellTemplate?.Enabled == true && item.CellTemplate.Content != null)
+                                if (field.DataType == DataType.String)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToString(x.Values[field.Name]))"
@@ -37,11 +37,101 @@
                                                     Format="@(this.GetColumnFormat(item))">
 
                                         <CellTemplate Context="context">
-                                            <GridRenderer Grid="item.CellTemplate.Content" />
+                                            <GridRenderer Grid="item.CellTemplate!.Content" />
                                         </CellTemplate>
                                     </PropertyColumn>
                                 }
-                                else
+                                else if (field.DataType == DataType.DateTime)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
+
+                                        <CellTemplate Context="context">
+                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                        </CellTemplate>
+                                    </PropertyColumn>
+
+                                }
+                                else if (field.DataType == DataType.DateOnly)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => DateOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
+
+                                        <CellTemplate Context="context">
+                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                        </CellTemplate>
+                                    </PropertyColumn>
+                                }
+                                else if (field.DataType == DataType.TimeOnly)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => TimeOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
+
+                                        <CellTemplate Context="context">
+                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                        </CellTemplate>
+
+                                    </PropertyColumn>
+                                }
+                                else if (field.DataType == DataType.Integer)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToInt32(x.Values[field.Name]))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
+
+                                        <CellTemplate Context="context">
+                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                        </CellTemplate>
+                                    </PropertyColumn>
+                                }
+                                else if (field.DataType == DataType.Float)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToDouble(x.Values[field.Name]))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
+
+                                        <CellTemplate Context="context">
+                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                        </CellTemplate>
+
+                                    </PropertyColumn>
+                                }
+                                else if (field.DataType == DataType.Boolean)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToBoolean(x.Values[field.Name]))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
+
+                                        <CellTemplate Context="context">
+                                            <GridRenderer Grid="item.CellTemplate!.Content" />
+                                        </CellTemplate>
+                                    </PropertyColumn>
+                                }
+                            }
+                            else
+                            {
+                                if (field.DataType == DataType.String)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToString(x.Values[field.Name]))"
@@ -50,72 +140,71 @@
                                                     Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
                                                     Format="@(this.GetColumnFormat(item))" />
                                 }
-                            }
-                            if (field.DataType == DataType.DateTime)
-                            {
-                                <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
-                                                Property="@(x => Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture))"
-                                                Filterable="item.EnableFitering"
-                                                Sortable="item.EnableSorting"
-                                                Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
-                                                Format="@(this.GetColumnFormat(item))">
+                                else if (field.DataType == DataType.DateTime)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))" />
 
-                                </PropertyColumn>
-                            }
-                            if (field.DataType == DataType.DateOnly)
-                            {
-                                <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
-                                                Property="@(x => DateOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
-                                                Filterable="item.EnableFitering"
-                                                Sortable="item.EnableSorting"
-                                                Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
-                                                Format="@(this.GetColumnFormat(item))">
+                                }
+                                else if (field.DataType == DataType.DateOnly)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => DateOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
 
-                                </PropertyColumn>
-                            }
-                            if (field.DataType == DataType.TimeOnly)
-                            {
-                                <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
-                                                Property="@(x => TimeOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
-                                                Filterable="item.EnableFitering"
-                                                Sortable="item.EnableSorting"
-                                                Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
-                                                Format="@(this.GetColumnFormat(item))">
+                                    </PropertyColumn>
+                                }
+                                else if (field.DataType == DataType.TimeOnly)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => TimeOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
 
-                                </PropertyColumn>
-                            }
-                            if (field.DataType == DataType.Integer)
-                            {
-                                <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
-                                                Property="@(x => Convert.ToInt32(x.Values[field.Name]))"
-                                                Filterable="item.EnableFitering"
-                                                Sortable="item.EnableSorting"
-                                                Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
-                                                Format="@(this.GetColumnFormat(item))">
+                                    </PropertyColumn>
+                                }
+                                else if (field.DataType == DataType.Integer)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToInt32(x.Values[field.Name]))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
 
-                                </PropertyColumn>
-                            }
-                            if (field.DataType == DataType.Float)
-                            {
-                                <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
-                                                Property="@(x => Convert.ToDouble(x.Values[field.Name]))"
-                                                Filterable="item.EnableFitering"
-                                                Sortable="item.EnableSorting"
-                                                Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
-                                                Format="@(this.GetColumnFormat(item))">
+                                    </PropertyColumn>
+                                }
+                                else if (field.DataType == DataType.Float)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToDouble(x.Values[field.Name]))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
 
-                                </PropertyColumn>
-                            }
-                            if (field.DataType == DataType.Boolean)
-                            {
-                                <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
-                                                Property="@(x => Convert.ToBoolean(x.Values[field.Name]))"
-                                                Filterable="item.EnableFitering"
-                                                Sortable="item.EnableSorting"
-                                                Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
-                                                Format="@(this.GetColumnFormat(item))">
+                                    </PropertyColumn>
+                                }
+                                else if (field.DataType == DataType.Boolean)
+                                {
+                                    <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
+                                                    Property="@(x => Convert.ToBoolean(x.Values[field.Name]))"
+                                                    Filterable="item.EnableFitering"
+                                                    Sortable="item.EnableSorting"
+                                                    Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
+                                                    Format="@(this.GetColumnFormat(item))">
 
-                                </PropertyColumn>
+                                    </PropertyColumn>
+                                }
                             }
                         }
                     }
@@ -183,13 +272,13 @@
     }
 
     private RenderFragment RenderCellTemplate(DataGridColumnModelCore column, DatasetRowModelCore row) => builder =>
-{
-    if (column.CellTemplate?.Content is null)
-        return;
+    {
+        if (column.CellTemplate?.Content is null)
+            return;
 
-    builder.OpenComponent(0, typeof(GridRenderer));
-    builder.AddAttribute(1, "Model", column.CellTemplate.Content);
-    builder.AddAttribute(2, "CurrentRow", row);
-    builder.CloseComponent();
-};
+        builder.OpenComponent(0, typeof(GridRenderer));
+        builder.AddAttribute(1, "Model", column.CellTemplate.Content);
+        builder.AddAttribute(2, "CurrentRow", row);
+        builder.CloseComponent();
+    };
 }
