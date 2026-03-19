@@ -34,7 +34,7 @@ namespace DMR_Razor
 			.Cast<DatasetFieldModelCore>()
 			.Where(f => !string.IsNullOrWhiteSpace(f.Source) && f.Source.StartsWith("=")).ToList();
 
-			foreach (var row in dataset.Rows)
+			foreach (var row in dataset.DataRows)
 			{
 				foreach (var col in calculatedFields)
 				{

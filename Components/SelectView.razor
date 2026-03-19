@@ -50,7 +50,7 @@
 
         var dataset = StaticDataResolver.CalculateData(this.Model.Dataset, this.Model.ModuleDocumentCore
             , this.Evaluator);
-        this.Rows = dataset.Rows;
+        this.Rows = dataset.DataRows;
     }
 
     private Task OnChanged(DatasetRowModelCore? v)
