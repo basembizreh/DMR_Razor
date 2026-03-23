@@ -1,11 +1,15 @@
-﻿@using DMB.Core.Evaluator
+﻿@using DMB.Core.Actions
+@using DMB.Core.Evaluator
 @inject ExpressionEvaluator Evaluator
+@inject ActionInvoker ActionInvoker
+@inject IDialogService DialogService
 
 <div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
     <MudButton Variant="@Model.Variant"
                Color="@(ExpressionablePropertyResolver<Color>.Resolve(Model.Color, Evaluator))"
                StartIcon="@StartIcon"
-               EndIcon="@EndIcon">
+               EndIcon="@EndIcon"
+               OnClick="HandleClick">
         @Model.Text.Evaluate(Evaluator)
     </MudButton>
 </div>
@@ -14,6 +18,21 @@
     [Parameter, EditorRequired]
     public ButtonModelCore Model { get; set; } = default!;
 
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
+
     private string? StartIcon => MudIconResolver.Resolve(Model.StartIconKey);
     private string? EndIcon => MudIconResolver.Resolve(Model.EndIconKey);
+
+    private async Task HandleClick()
+    {
+        if (Model.OnClickAction == null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(Model.OnClickAction.ActionExpression))
+            return;
+
+        await this.ActionInvoker.ExecuteAsync(Model.OnClickAction);
+        this.StateHasChanged();
+    }
 }

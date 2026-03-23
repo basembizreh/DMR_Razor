@@ -1,89 +1,240 @@
-﻿using DMB.Core.Actions;
+﻿using System.Reflection;
 using DMB.Core.Evaluator;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using ZXing;
 
-namespace DMR_Razor
+namespace DMB.Core.Actions
 {
     public class ActionInvoker
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ExpressionEvaluator evaluator;
+        private readonly ExpressionEvaluator _evaluator;
 
         public ActionInvoker(IServiceProvider serviceProvider, ExpressionEvaluator expressionEvaluator)
         {
-            this._serviceProvider = serviceProvider;
-            this.evaluator = expressionEvaluator;
+            _serviceProvider = serviceProvider;
+            _evaluator = expressionEvaluator;
         }
 
-        public void Execute(ActionBinding actionBinding, object? successResult = null
-            , Exception? failureException = null)
+        public async Task ExecuteAsync(
+            ActionBinding actionBinding,
+            object? successResult = null,
+            Exception? failureException = null)
         {
+            if (actionBinding == null)
+                throw new ArgumentNullException(nameof(actionBinding));
+
             if (string.IsNullOrWhiteSpace(actionBinding.ActionExpression))
-                throw new Exception("Expression is not defined!");
+                throw new Exception("ActionExpression is not defined.");
 
-            if (string.IsNullOrWhiteSpace(actionBinding.ReferenceName))
-                throw new Exception("Refernce is not defined!");
+            if (string.IsNullOrWhiteSpace(actionBinding.TargetTypeName))
+                throw new Exception("TargetTypeName is not defined.");
 
-            var a = System.Reflection.Assembly.GetEntryAssembly();
-            var type = a.GetType(actionBinding.ReferenceName);
-            var service = _serviceProvider.GetService(type);
+            string actionExpression = ExpressionEvaluator.NormalizeExpression(actionBinding.ActionExpression);
 
-            string pattern = @"\[""?(.*?)""?\]";
+            Type? targetType = ResolveType(actionBinding.TargetTypeName);
+            if (targetType == null)
+                throw new Exception($"Type '{actionBinding.TargetTypeName}' was not found.");
 
-            // 3. Extract and store in a List
-            List<string> inputs = Regex.Matches(actionBinding.ActionExpression, pattern)
-                                        .Cast<Match>()
-                                        .Select(m => m.Groups[1].Value)
-                                        .ToList();
+            object? service = _serviceProvider.GetService(targetType);
+            if (service == null)
+                throw new Exception($"Service '{actionBinding.TargetTypeName}' is not registered.");
 
-            var inputParams = new List<object?>(inputs.Count);
+            string methodName = ExtractMethodName(actionExpression);
+            if (string.IsNullOrWhiteSpace(methodName))
+                throw new Exception("Invalid ActionExpression format.");
 
-            if (inputs.Count > 0)
-            {
-                foreach (var item in inputs)
-                {
-                    inputParams.Add(this.evaluator.Evaluate(item));
-                }
-            }
+            List<string> argExpressions = ExtractArgumentExpressions(actionExpression);
+            object?[] inputParams = BuildInputParameters(argExpressions, successResult, failureException);
 
-            pattern = @"^(\w+)(?=\()";
-
-            Match match = Regex.Match(actionBinding.ActionExpression, pattern);
-
-            if (!match.Success)
-            {
-                throw new Exception("Invalid expression format!");
-            }
-
-            string methodName = match.Groups[1].Value;
-            var methodInfo = service.GetType().GetMethod(methodName);
-
-            if (methodInfo == null) throw new Exception("Method not found");
+            MethodInfo? methodInfo = FindMethod(targetType, methodName, inputParams.Length);
+            if (methodInfo == null)
+                throw new Exception(
+                    $"Method '{methodName}' with {inputParams.Length} parameter(s) was not found on '{targetType.FullName}'.");
 
             try
             {
-                var result = methodInfo.Invoke(service, inputParams.ToArray());
+                object? result = await InvokeMethodAsync(service, methodInfo, inputParams);
 
                 if (actionBinding.OnSuccessAction != null)
                 {
-                    // result should be consider somewhere
-                    this.Execute(actionBinding.OnSuccessAction, result);
+                    await ExecuteAsync(actionBinding.OnSuccessAction, result, null);
                 }
+            }
+            catch (TargetInvocationException ex)
+            {
+                Exception actualEx = ex.InnerException ?? ex;
+
+                if (actionBinding.OnFailureAction != null)
+                {
+                    await ExecuteAsync(actionBinding.OnFailureAction, null, actualEx);
+                    return;
+                }
+
+                throw actualEx;
             }
             catch (Exception ex)
             {
                 if (actionBinding.OnFailureAction != null)
                 {
-                    this.Execute(actionBinding.OnFailureAction, null, ex);
+                    await ExecuteAsync(actionBinding.OnFailureAction, null, ex);
+                    return;
                 }
+
+                throw;
             }
         }
-    }   
+
+        private async Task<object?> InvokeMethodAsync(object service, MethodInfo methodInfo, object?[] inputParams)
+        {
+            object? rawResult = methodInfo.Invoke(service, inputParams);
+
+            if (rawResult == null)
+                return null;
+
+            if (rawResult is Task task)
+            {
+                await task;
+
+                Type taskType = task.GetType();
+                if (taskType.IsGenericType)
+                {
+                    PropertyInfo? resultProp = taskType.GetProperty("Result");
+                    if (resultProp != null)
+                        return resultProp.GetValue(task);
+                }
+
+                return null;
+            }
+
+            return rawResult;
+        }
+
+        private object?[] BuildInputParameters(
+            List<string> argExpressions,
+            object? successResult,
+            Exception? failureException)
+        {
+            if (argExpressions.Count == 0)
+                return Array.Empty<object?>();
+
+            var contextVars = new Dictionary<string, object?>();
+
+            if (successResult != null)
+                contextVars["Result"] = successResult;
+
+            if (failureException != null)
+                contextVars["Exception"] = failureException;
+
+            var values = new object?[argExpressions.Count];
+
+            for (int i = 0; i < argExpressions.Count; i++)
+            {
+                values[i] = _evaluator.Evaluate(
+                    argExpressions[i],
+                    contextVars.Count > 0 ? contextVars : null);
+            }
+
+            return values;
+        }
+
+        private static Type? ResolveType(string targetTypeName)
+        {
+            Type? type = Type.GetType(targetTypeName, throwOnError: false, ignoreCase: true);
+            if (type != null)
+                return type;
+
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                type = asm.GetType(targetTypeName, throwOnError: false, ignoreCase: true);
+                if (type != null)
+                    return type;
+            }
+
+            return null;
+        }
+
+        private static MethodInfo? FindMethod(Type targetType, string methodName, int parameterCount)
+        {
+            return targetType
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .FirstOrDefault(m =>
+                    m.Name == methodName &&
+                    m.GetParameters().Length == parameterCount);
+        }
+
+        private static string ExtractMethodName(string actionExpression)
+        {
+            int idx = actionExpression.IndexOf('(');
+            if (idx <= 0)
+                return string.Empty;
+
+            return actionExpression.Substring(0, idx).Trim();
+        }
+
+        private static List<string> ExtractArgumentExpressions(string actionExpression)
+        {
+            var result = new List<string>();
+
+            int start = actionExpression.IndexOf('(');
+            int end = actionExpression.LastIndexOf(')');
+
+            if (start < 0 || end <= start)
+                return result;
+
+            string argsText = actionExpression.Substring(start + 1, end - start - 1).Trim();
+            if (string.IsNullOrWhiteSpace(argsText))
+                return result;
+
+            int depth = 0;
+            bool inString = false;
+            char stringChar = '\0';
+            int argStart = 0;
+
+            for (int i = 0; i < argsText.Length; i++)
+            {
+                char c = argsText[i];
+
+                if (inString)
+                {
+                    if (c == stringChar && (i == 0 || argsText[i - 1] != '\\'))
+                        inString = false;
+
+                    continue;
+                }
+
+                if (c == '"' || c == '\'')
+                {
+                    inString = true;
+                    stringChar = c;
+                    continue;
+                }
+
+                if (c == '(' || c == '[' || c == '{')
+                {
+                    depth++;
+                    continue;
+                }
+
+                if (c == ')' || c == ']' || c == '}')
+                {
+                    depth--;
+                    continue;
+                }
+
+                if (c == ',' && depth == 0)
+                {
+                    string part = argsText.Substring(argStart, i - argStart).Trim();
+                    if (!string.IsNullOrWhiteSpace(part))
+                        result.Add(part);
+
+                    argStart = i + 1;
+                }
+            }
+
+            string last = argsText.Substring(argStart).Trim();
+            if (!string.IsNullOrWhiteSpace(last))
+                result.Add(last);
+
+            return result;
+        }
+    }
 }

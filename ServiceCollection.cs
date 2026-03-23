@@ -17,6 +17,7 @@ namespace DMR_Razor
         {
             services.TryAddScoped<DMB.Core.ModuleDocumentCore>();
             services.TryAddScoped<DMB.Core.Evaluator.ExpressionEvaluator>();
+            services.TryAddScoped<DMB.Core.Actions.ActionInvoker>();
             services.TryAddScoped<DMB.Core.Dmf.DmfServiceCore<
                 DMB.Core.Elements.DatasetModelCore<DMB.Core.Elements.DatasetFieldModelCore>,
                 DMB.Core.Elements.DatasetFieldModelCore, DataGridColumnModelCore>>();
