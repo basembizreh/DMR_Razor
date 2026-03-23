@@ -27,7 +27,7 @@
                         {
                             @if (this.HasCellTemplate(item))
                             {
-                                if (field.DataType == DataType.String)
+                                if (field.DataType == FieldDataType.String)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToString(x.Values[field.Name]))"
@@ -41,7 +41,7 @@
                                         </CellTemplate>
                                     </PropertyColumn>
                                 }
-                                else if (field.DataType == DataType.DateTime)
+                                else if (field.DataType == FieldDataType.DateTime)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture))"
@@ -56,7 +56,7 @@
                                     </PropertyColumn>
 
                                 }
-                                else if (field.DataType == DataType.DateOnly)
+                                else if (field.DataType == FieldDataType.DateOnly)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => DateOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
@@ -70,7 +70,7 @@
                                         </CellTemplate>
                                     </PropertyColumn>
                                 }
-                                else if (field.DataType == DataType.TimeOnly)
+                                else if (field.DataType == FieldDataType.TimeOnly)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => TimeOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
@@ -85,7 +85,7 @@
 
                                     </PropertyColumn>
                                 }
-                                else if (field.DataType == DataType.Integer)
+                                else if (field.DataType == FieldDataType.Integer)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToInt32(x.Values[field.Name]))"
@@ -99,7 +99,7 @@
                                         </CellTemplate>
                                     </PropertyColumn>
                                 }
-                                else if (field.DataType == DataType.Float)
+                                else if (field.DataType == FieldDataType.Float)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToDouble(x.Values[field.Name]))"
@@ -114,7 +114,7 @@
 
                                     </PropertyColumn>
                                 }
-                                else if (field.DataType == DataType.Boolean)
+                                else if (field.DataType == FieldDataType.Boolean)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToBoolean(x.Values[field.Name]))"
@@ -131,7 +131,7 @@
                             }
                             else
                             {
-                                if (field.DataType == DataType.String)
+                                if (field.DataType == FieldDataType.String)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToString(x.Values[field.Name]))"
@@ -140,7 +140,7 @@
                                                     Hidden="@(!ExpressionablePropertyResolver<bool>.Resolve(item.Visible, Evaluator))"
                                                     Format="@(this.GetColumnFormat(item))" />
                                 }
-                                else if (field.DataType == DataType.DateTime)
+                                else if (field.DataType == FieldDataType.DateTime)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture))"
@@ -150,7 +150,7 @@
                                                     Format="@(this.GetColumnFormat(item))" />
 
                                 }
-                                else if (field.DataType == DataType.DateOnly)
+                                else if (field.DataType == FieldDataType.DateOnly)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => DateOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
@@ -161,7 +161,7 @@
 
                                     </PropertyColumn>
                                 }
-                                else if (field.DataType == DataType.TimeOnly)
+                                else if (field.DataType == FieldDataType.TimeOnly)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => TimeOnly.FromDateTime(Convert.ToDateTime(x.Values[field.Name], CultureInfo.InvariantCulture)))"
@@ -172,7 +172,7 @@
 
                                     </PropertyColumn>
                                 }
-                                else if (field.DataType == DataType.Integer)
+                                else if (field.DataType == FieldDataType.Integer)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToInt32(x.Values[field.Name]))"
@@ -183,7 +183,7 @@
 
                                     </PropertyColumn>
                                 }
-                                else if (field.DataType == DataType.Float)
+                                else if (field.DataType == FieldDataType.Float)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToDouble(x.Values[field.Name]))"
@@ -194,7 +194,7 @@
 
                                     </PropertyColumn>
                                 }
-                                else if (field.DataType == DataType.Boolean)
+                                else if (field.DataType == FieldDataType.Boolean)
                                 {
                                     <PropertyColumn Title="@(ExpressionablePropertyResolver<string?>.Resolve(item.HeaderText, Evaluator))"
                                                     Property="@(x => Convert.ToBoolean(x.Values[field.Name]))"
