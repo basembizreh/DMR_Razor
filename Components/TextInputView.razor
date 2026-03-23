@@ -7,7 +7,7 @@
                   Variant="@Model.Variant"
                   AdornmentColor="@(ExpressionablePropertyResolver<MudBlazor.Color>.Resolve(Model.Color, Evaluator))"
                   Margin="@Model.Margin"
-                  Value="@((string?)Model.Value)"
+                  Value="@(Model.DefaultValue?.Evaluate(this.Evaluator, this.CurrentRow)?.ToString())"
                   ValueChanged="OnChanged"
                   DebounceInterval="@Model.DebounceInterval" />
 </div>
@@ -15,6 +15,9 @@
 @code {
     [Parameter, EditorRequired]
     public TextInputModelCore Model { get; set; } = default!;
+
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
 
     private Task OnChanged(string v)
     {

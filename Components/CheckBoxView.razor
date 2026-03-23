@@ -15,6 +15,9 @@
     [Parameter, EditorRequired]
     public CheckBoxModelCore Model { get; set; } = default!;
 
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
+
     private Task OnChanged(bool v)
     {
         if (!Model.ReadOnly)

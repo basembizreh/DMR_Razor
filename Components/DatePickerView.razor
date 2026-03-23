@@ -13,6 +13,9 @@
     [Parameter, EditorRequired]
     public DatePickerModelCore Model { get; set; } = default!;
 
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
+
     private Task OnChanged(DateTime? v)
     {
         Model.Value = v?.ToString(Model.DateFormat);
@@ -23,9 +26,10 @@
     {
         get
         {
-            if (!string.IsNullOrWhiteSpace(Model.Value))
+            if (Model.Value != null && !string.IsNullOrWhiteSpace(Model.Value.ToString()))
             {
-                return DateTime.TryParseExact(Model.Value, Model.DateFormat, null, System.Globalization.DateTimeStyles.None, out var dt)
+                return DateTime.TryParseExact(Model.Value.ToString(), Model.DateFormat
+                , null, System.Globalization.DateTimeStyles.None, out var dt)
                     ? dt
                     : null;
             }

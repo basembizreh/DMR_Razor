@@ -1,5 +1,7 @@
-﻿@using DMB.Core.Evaluator
+﻿@using DMB.Core.Actions
+@using DMB.Core.Evaluator
 @inject ExpressionEvaluator Evaluator
+@inject ActionInvoker ActionInvoker
 
 <div class="el-wrap @Model.Class" style="@Model.Style" id="@Model.Id">
 
@@ -8,54 +10,104 @@
                        FullWidth="true"
                        Variant="@Model.Variant"
                        Margin="@Model.Margin"
-                       ValueChanged="OnChanged"
+                       ValueChanged="HandleValueChangedAsync"
+                       Clearable="@Model.EnableClear"
                        Disabled="@Model.Disabled"
-                       ItemCollection="Rows"
                        Label="@Model.Label"
+                       Value="@selectedRow"
+                       SearchBox="@Model.EnableFilter"
                        AnchorOrigin="@Model.AnchorOrigin"
-                       ToStringFunc="@(x =>
-                           x is null
-                               ? string.Empty
-                               : (string.IsNullOrWhiteSpace(Model.TextField)
-                                   ? string.Empty
-                                   : x.GetString(Model.TextField))>"
-)">
-
-        @* @if (Model.Items is not null)
-    {
-        foreach (var item in Model.Items)
-        {
-            <MudSelectItem T="string" Value="@item.Value">@item.Text</MudSelectItem>
-        }
-    } *@
+                       SearchBoxAutoFocus="true"
+                       Virtualize="false"
+                       ItemCollection="Rows"
+                       ToStringFunc="@(x => x is null ? string.Empty
+                                    : (string.IsNullOrWhiteSpace(Model.TextField)
+                                        ? string.Empty
+                                        : x.GetString(Model.TextField)))">
     </MudSelectExtended>
+
+   
 </div>
 
 @code {
     [Parameter, EditorRequired]
     public SelectModelCore Model { get; set; } = default!;
 
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
+
     public List<DatasetRowModelCore> Rows { get; set; } = new();
 
-    protected override void OnInitialized()
+    private DatasetRowModelCore? selectedRow;
+    private bool _defaultApplied;
+
+    protected override void OnParametersSet()
     {
-        this.LoadData();
-        base.OnInitialized();
+        LoadData();
+        SyncSelectedRow();
     }
 
     private void LoadData()
     {
+        this.Rows = new();
+
         if (this.Model.ModuleDocumentCore is null || string.IsNullOrWhiteSpace(this.Model.Dataset))
             return;
 
-        var dataset = StaticDataResolver.CalculateData(this.Model.Dataset, this.Model.ModuleDocumentCore
-            , this.Evaluator);
-        this.Rows = dataset.DataRows;
+        var dataset = StaticDataResolver.CalculateData(
+            this.Model.Dataset,
+            this.Model.ModuleDocumentCore,
+            this.Evaluator);
+
+        this.Rows = dataset.DataRows ?? new();
     }
 
-    private Task OnChanged(DatasetRowModelCore? v)
+    private void SyncSelectedRow()
     {
-        //Model.Value = v;
-        return Task.CompletedTask;
+        if (string.IsNullOrWhiteSpace(this.Model.ValueField))
+        {
+            this.selectedRow = null;
+            return;
+        }
+
+        object? targetValue = null;
+
+        if (this.Model.Value is not null)
+        {
+            targetValue = this.Model.Value;
+        }
+        else if (!_defaultApplied && !string.IsNullOrWhiteSpace(this.Model.DefaultValue))
+        {
+            targetValue = this.Model.DefaultValue.Evaluate(this.Evaluator, this.CurrentRow);
+            this.Model.Value = targetValue;
+            _defaultApplied = true;
+        }
+
+        if (targetValue is null)
+        {
+            this.selectedRow = null;
+            return;
+        }
+
+        this.selectedRow = this.Rows.FirstOrDefault(p =>
+        {
+            var value = p.Get<object?>(this.Model.ValueField);
+            return Equals(value, targetValue);
+        });
+    }
+
+    private async Task HandleValueChangedAsync(DatasetRowModelCore? v)
+    {
+        this.selectedRow = v;
+
+        if (string.IsNullOrWhiteSpace(this.Model.ValueField))
+            this.Model.Value = null;
+        else
+            this.Model.Value = v?.Get<object?>(this.Model.ValueField);
+
+        if (!ActionBindingHelper.IsDefined(Model.OnValueChangedAction))
+            return;
+
+        await this.ActionInvoker.ExecuteAsync(Model.OnValueChangedAction);
     }
 }

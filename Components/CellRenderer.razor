@@ -10,7 +10,7 @@
 
     @if (Cell.Element is GridModelCore subGrid)
     {
-        <GridRenderer Grid="subGrid" />
+        <GridRenderer Grid="subGrid" CurrentRow="CurrentRow"/>
     }
     else if (Cell.Element is not null && IsVisible(Cell.Element))
     {

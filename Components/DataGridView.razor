@@ -12,8 +12,12 @@
                  Bordered="Model.Bordered"
                  Hover="Model.Hover"
                  Dense="Model.Dense">
+        
         <ToolBarContent>
-
+            @if (this.Model.ShowToolbar && this.Model.ToolBarGrid != null) 
+            {
+                <GridRenderer Grid="this.Model.ToolBarGrid" CurrentRow="CurrentRow" />
+            }
         </ToolBarContent>
         <Columns>
             @{

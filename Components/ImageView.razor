@@ -7,4 +7,7 @@
 @code {
     [Parameter, EditorRequired]
     public ImageModelCore Model { get; set; } = default!;
+
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
 }

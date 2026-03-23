@@ -14,6 +14,9 @@
     [Parameter, EditorRequired]
     public SwitchModelCore Model { get; set; } = default!;
 
+    [Parameter]
+    public DatasetRowModelCore? CurrentRow { get; set; }
+
     private Task OnChanged(bool v)
     {
         Model.Checked = v;
