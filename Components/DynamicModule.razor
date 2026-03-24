@@ -1,11 +1,15 @@
-﻿@using DMB.Core.Dmf
+﻿@using DMB.Core.Actions
+@using DMB.Core.Dmf
+@using DMB.Core.Evaluator
 
 @implements IDisposable
 
-@inject ModuleDocumentCore moduleDocument;
+@inject ModuleDocumentCore moduleDocument
+@inject ExpressionEvaluator Evaluator
 @inject DmfServiceCore<DatasetModelCore<DatasetFieldModelCore>, DatasetFieldModelCore, DataGridColumnModelCore> DmfService
+@inject ActionInvoker ActionInvoker
 
-@if (_grid is null)
+@if (this.isLoading)
 {
     <div>Loading module...</div>
 }
@@ -25,9 +29,31 @@ else
         if (!string.IsNullOrWhiteSpace(this.ModuleFileName))
         {
             this._grid = this.DmfService.Load(this.moduleDocument, this.ModuleFileName, false);
+            this.Evaluator.RefreshContext();
         }
         this.moduleDocument.StateChanged += this.ModuleState_StateChanged;
         return base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ExecuteStartupActionsAsync();
+            this.isLoading = false;
+            this.StateHasChanged();
+        }
+    }
+
+    private async Task ExecuteStartupActionsAsync()
+    {
+        if (this.moduleDocument?.StartupActions == null)
+            return;
+
+        foreach (var action in this.moduleDocument.StartupActions)
+        {
+            await ActionInvoker.ExecuteAsync(action);
+        }
     }
 
     public void Dispose()
@@ -39,4 +65,29 @@ else
     {
         _ = InvokeAsync(StateHasChanged);
     }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.LoadData();
+    }
+
+    private void LoadData()
+    {
+        var datasets = this.moduleDocument.AllItems
+            .OfType<DatasetModelCore<DatasetFieldModelCore>>()
+            .Cast<DatasetModelCore<DatasetFieldModelCore>>().ToList();
+
+        if (datasets != null && datasets.Count > 0)
+        {
+            foreach (var ds in datasets)
+            {
+                var dataset = StaticDataResolver.CalculateData(ds.DatasetName, this.moduleDocument, this.Evaluator);
+            }
+        }
+    }
+}
+
+@code {
+    private bool isLoading = true;
 }

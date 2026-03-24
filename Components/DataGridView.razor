@@ -11,7 +11,8 @@
                  Striped="Model.Striped"
                  Bordered="Model.Bordered"
                  Hover="Model.Hover"
-                 Dense="Model.Dense">
+                 Dense="Model.Dense"
+                 RowsPerPage="Model.RowsPerPage">
         
         <ToolBarContent>
             @if (this.Model.ShowToolbar && this.Model.ToolBarGrid != null) 
@@ -215,6 +216,9 @@
                 }
             }
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="DatasetRowModelCore" />
+        </PagerContent>
 
     </MudDataGrid>
 }

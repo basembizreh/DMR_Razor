@@ -15,8 +15,8 @@ namespace DMR_Razor
 			, ExpressionEvaluator evaluator)
 		{
 			var dataset = document.AllItems.OfType<DatasetModelCore<DatasetFieldModelCore>>()
-		   .Cast<DatasetModelCore<DatasetFieldModelCore>>()
-		   .FirstOrDefault(p => p.Id == datasetId);
+			   .Cast<DatasetModelCore<DatasetFieldModelCore>>()
+			   .FirstOrDefault(p => p.Id == datasetId);
 
 			if (dataset == null)
 				throw new Exception("Invalid dataset");

@@ -54,12 +54,13 @@
         if (this.Model.ModuleDocumentCore is null || string.IsNullOrWhiteSpace(this.Model.Dataset))
             return;
 
-        var dataset = StaticDataResolver.CalculateData(
-            this.Model.Dataset,
-            this.Model.ModuleDocumentCore,
-            this.Evaluator);
-
-        this.Rows = dataset.DataRows ?? new();
+        if (this.Model.ModuleDocumentCore.TryGetItemById(this.Model.Dataset, out IModuleItem item))
+        {
+            if (item is DatasetModelCore<DatasetFieldModelCore> dataset)
+            {
+                this.Rows = dataset.DataRows ?? new();
+            }
+        }
     }
 
     private void SyncSelectedRow()
